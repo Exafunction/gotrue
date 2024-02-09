@@ -7,6 +7,7 @@ import (
 	"encoding/xml"
 	"net/http"
 	"net/url"
+	"regexp"
 	"time"
 
 	"github.com/crewjam/saml"
@@ -77,7 +78,7 @@ func (a *API) SAMLACS(w http.ResponseWriter, r *http.Request) error {
 				return internalServerError("SAML RelayState has expired and destroying it failed. Try logging in again?").WithInternalError(err)
 			}
 
-			return badRequestError("SAML RelayState has expired. Try loggin in again?")
+			return badRequestError("SAML RelayState has expired. Try logging in again?")
 		}
 
 		// TODO: add abuse detection to bind the RelayState UUID with a
@@ -225,6 +226,33 @@ func (a *API) SAMLACS(w http.ResponseWriter, r *http.Request) error {
 	// remove all of the parsed claims, so that the rest can go into CustomClaims
 	for key := range providerClaimsMap {
 		delete(claims, key)
+	}
+
+	if config.SAML.AuthorizationGroupAttribute != "" {
+		groupValues := assertion.Attribute(config.SAML.AuthorizationGroupAttribute)
+
+		if len(groupValues) == 0 {
+				return badRequestError("SAML Assertion does not contain required group attribute " + config.SAML.AuthorizationGroupAttribute)
+		}
+
+		regex := config.SAML.AuthorizationGroupRegex
+		foundMatch := false
+		for _, groupValue := range groupValues {
+			matched, err := regexp.MatchString(regex, groupValue.Value)
+
+			if err != nil {
+				return badRequestError("Error parsing group regex: " + err.Error())
+			}
+
+			if matched {
+				foundMatch = true
+				break
+			}
+		}
+
+		if !foundMatch {
+			return badRequestError("SAML Assertion did not contain a group matching for " + regex)
+		}
 	}
 
 	providerClaims.CustomClaims = claims

@@ -24,6 +24,9 @@ type SAMLConfiguration struct {
 	Certificate   *x509.Certificate `json:"-"`
 
 	RateLimitAssertion float64 `default:"15" split_words:"true"`
+
+	AuthorizationGroupAttribute string `default:"" split_words:"true"`
+	AuthorizationGroupRegex     string `default:"" split_words:"true"`
 }
 
 func (c *SAMLConfiguration) Validate() error {
