@@ -25,7 +25,7 @@ dev-deps: ## Install developer dependencies
 
 deps: ## Install dependencies.
 	@go mod download
-	@go mod verify
+	mv /go/src/github.com/supabase/auth/patches/validate.go /go/pkg/mod/github.com/russellhaering/goxmldsig@v1.3.0/validate.go
 
 migrate_dev: ## Run database migrations for development.
 	hack/migrate.sh postgres
@@ -46,9 +46,9 @@ sec: dev-deps # Check for security vulnerabilities
 unused: dev-deps # Look for unused code
 	@echo "Unused code:"
 	staticcheck -checks U1000 $(CHECK_FILES)
-	
+
 	@echo
-	
+
 	@echo "Code used only in _test.go (do move it in those files):"
 	staticcheck -checks U1000 -tests=false $(CHECK_FILES)
 

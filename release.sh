@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="1.0.0"
+VERSION="1.0.1"
 REPOSITORY="codeium-enterprise"
 
 docker build . -t "exafunction/$REPOSITORY/gotrue:$VERSION"

@@ -232,7 +232,7 @@ func (a *API) SAMLACS(w http.ResponseWriter, r *http.Request) error {
 		groupValues := assertion.Attribute(config.SAML.AuthorizationGroupAttribute)
 
 		if len(groupValues) == 0 {
-				return badRequestError("SAML Assertion does not contain required group attribute " + config.SAML.AuthorizationGroupAttribute)
+			return badRequestError("SAML Assertion does not contain required group attribute " + config.SAML.AuthorizationGroupAttribute)
 		}
 
 		regex := config.SAML.AuthorizationGroupRegex

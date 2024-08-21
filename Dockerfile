@@ -9,6 +9,7 @@ WORKDIR /go/src/github.com/supabase/auth
 
 # Pulling dependencies
 COPY ./Makefile ./go.* ./
+COPY ./patches/validate.go /go/src/github.com/supabase/auth/patches/validate.go
 RUN make deps
 
 # Building stuff
